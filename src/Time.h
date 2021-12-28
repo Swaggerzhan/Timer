@@ -38,19 +38,34 @@ public:
   // set
   void setSecond(time_t second);
   void setMicroSecond(time_t microSecond);
+  void setMax(); // set max time
 
 
   // cal
   Time add(Time&);
   Time sub(Time&);
+  void addSecond(time_t second);
   Time operator+(Time&);
   Time operator+=(Time&);
   Time operator-(Time&);
   Time operator-=(Time&);
 
+  bool operator>(Time&);
+  bool operator<(Time&);
+  bool operator==(Time&);
+
 
   // for debug
   void show();
+
+  // static for stamp
+  static time_t microStampMax();
+  static time_t nanoStampMax();
+
+public:
+  const static time_t kSecond2NanoSecond;
+  const static time_t kSecond2MicroSecond;
+  const static time_t kMicroSecond2NanoSecond;
 
 
 private:

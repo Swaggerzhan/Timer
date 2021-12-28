@@ -4,14 +4,15 @@
 
 #include "Time.h"
 #include <iostream>
+#include <limits>
 
 using std::cout;
 using std::endl;
 using std::string;
 
-const time_t kSecond2NanoSecond = 1000 * 1000 * 1000; // s -> ns
-const time_t kSecond2MicroSecond = 1000 * 1000; // s -> us
-const time_t kMicroSecond2NanoSecond = 1000; // us -> ns
+const time_t Time::kSecond2NanoSecond = 1000 * 1000 * 1000; // s -> ns
+const time_t Time::kSecond2MicroSecond = 1000 * 1000; // s -> us
+const time_t Time::kMicroSecond2NanoSecond = 1000; // us -> ns
 
 
 // for debug
@@ -19,8 +20,8 @@ void showDiff(Time* start, Time* end) {
   if (end->microStamp() < start->microStamp())
     cout << "end < start" << endl;
   time_t interval = end->microStamp() - start->microStamp();
-  cout << interval / kSecond2MicroSecond << " s";
-  cout << interval % kSecond2MicroSecond << " us" << endl;
+  cout << interval / Time::kSecond2MicroSecond << " s";
+  cout << interval % Time::kSecond2MicroSecond << " us" << endl;
 }
 
 
@@ -91,6 +92,11 @@ void Time::setMicroSecond(time_t microSecond) {
   tv_.tv_usec = microSecond;
 }
 
+void Time::setMax() {
+  tv_.tv_sec = std::numeric_limits<long>::max();
+  tv_.tv_usec = std::numeric_limits<long>::max();
+}
+
 
 // cal
 Time Time::add(Time &right) {
@@ -105,6 +111,10 @@ Time Time::sub(Time &right) {
   tv_.tv_sec = us / kSecond2MicroSecond;
   tv_.tv_usec = us % kSecond2MicroSecond;
   return *this;
+}
+
+void Time::addSecond(time_t second) {
+  tv_.tv_sec += second;
 }
 
 Time Time::operator + (Time &right) {
@@ -131,8 +141,31 @@ Time Time::operator-=(Time &right) {
   return sub(right);
 }
 
+bool Time::operator>(Time &right) {
+  return microStamp() - right.microStamp() > 0;
+}
+
+bool Time::operator<(Time &right) {
+  return microStamp() - right.microStamp() < 0;
+}
+
+bool Time::operator==(Time &right) {
+  return microStamp() == right.microStamp();
+}
+
 // for debug
 void Time::show() {
   cout << tv_.tv_sec << " s " << tv_.tv_usec << " us" << endl;
 }
+
+
+// static
+time_t Time::microStampMax() {
+  return std::numeric_limits<long>::max();
+}
+
+time_t Time::nanoStampMax() {
+  return std::numeric_limits<long>::max();
+}
+
 
